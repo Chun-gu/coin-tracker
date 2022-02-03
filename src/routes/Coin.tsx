@@ -211,7 +211,7 @@ export const Coin = () => {
               <Link to={`/${coinId}/chart`}>Chart</Link>
             </Tab>
           </Tabs>
-          <Outlet context={coinId}/>
+          <Outlet context={{ coinId }} />
         </>
       )}
     </Container>
