@@ -9,6 +9,7 @@ import {
 // import { useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import { coinInfoFetcher, coinTickersFetcher } from "../api";
+import { Helmet } from "react-helmet-async";
 
 const Container = styled.div`
   max-width: 480px;
@@ -145,7 +146,10 @@ export const Coin = () => {
   const chartMatch = useMatch("/:coinId/chart");
   const { isLoading: isInfoLoading, data: infoData } = useQuery<IInfoData>(
     ["info", coinId],
-    () => coinInfoFetcher(coinId)
+    () => coinInfoFetcher(coinId),
+    {
+      refetchInterval: 3000,
+    }
   );
   const { isLoading: isTickersLoading, data: tickersData } =
     useQuery<ITickerData>(["tickers", coinId], () =>
@@ -169,6 +173,11 @@ export const Coin = () => {
   const isLoading = isInfoLoading || isTickersLoading;
   return (
     <Container>
+      <Helmet>
+        <title>
+          {state?.name ? state.name : isLoading ? "Loading..." : infoData?.name}
+        </title>
+      </Helmet>
       <Header>
         <Title>
           {state?.name ? state.name : isLoading ? "Loading..." : infoData?.name}
@@ -188,8 +197,8 @@ export const Coin = () => {
               <span>${infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>Open Source:</span>
-              <span>{infoData?.open_source ? "Yes" : "No"}</span>
+              <span>Price:</span>
+              <span>{tickersData?.quotes.USD.price.toFixed(3)}</span>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>
